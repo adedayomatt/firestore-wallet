@@ -1,0 +1,34 @@
+{
+  "name": "@adedayomatthews/firestore-wallet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adedayomatt/firestore-wallet.git"
+  },
+  "keywords": [
+    "firestore",
+    "firebase",
+    "wallet"
+  ],
+  "author": "Adedayo Matthews",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adedayomatt/firestore-wallet/issues"
+  },
+  "homepage": "https://github.com/adedayomatt/firestore-wallet#readme",
+  "dependencies": {
+    "@adedayomatthews/firestore-model": "^1.0.3",
+    "@adedayomatthews/utility": "^1.0.0",
+    "apollo-server-express": "^3.13.0",
+    "axios": "^1.6.2",
+    "moment": "^2.29.4",
+    "paystack-api": "^2.0.6",
+    "qs": "^6.11.2",
+    "stripe": "^14.5.0"
+  }
+}
