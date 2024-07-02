@@ -4,6 +4,7 @@ const types = {
     inflow: "inflow",
     outflow: "outflow",
     funding: "funding",
+    transfer: "transfer",
 };
 
 module.exports = types;

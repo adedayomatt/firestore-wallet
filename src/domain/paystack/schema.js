@@ -3,13 +3,13 @@ const { gql } =  require('apollo-server-express');
 const schema = gql`
 
     extend type Query {
-      paystackGetBanks: [PaystackBank]
+      paystackGetBanks(entity_id: ID): [PaystackBank]
     }
 
     extend type Mutation {
-        paystackValidateNuban(nuban: String!, bank_code: String!): PaystackNubanValidation
-        paystackCreateTransfer(amount: Float!, recipient: String!): PaystackTransfer
-        paystackCreateTransferRecipient(name: String!, account_number: String!, bank_code: String!): PaystackTransferRecipient
+        paystackValidateNuban(entity_id: ID, nuban: String!, bank_code: String!): PaystackNubanValidation
+        paystackCreateTransfer(entity_id: ID, amount: Float!, recipient: String!): PaystackTransfer
+        paystackCreateTransferRecipient(entity_id: ID, name: String!, account_number: String!, bank_code: String!): PaystackTransferRecipient
     }
 
     type PaystackBank {
@@ -64,6 +64,12 @@ const schema = gql`
         id: ID
         createdAt: String
         updatedAt: String
+    }
+    
+    input PaystackNubanInput {
+        account_name: String!
+        account_number: String!
+        bank_code: String!
     }
 `;
 

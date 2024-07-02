@@ -1,6 +1,6 @@
 const status = require("../../../enums/status");
 const walletTypes = require("../../../enums/wallet_types");
-const AdminWallet = require("../../../Services/AdminWallet");
+const AdminWallet = require("../../../services/AdminWallet");
 const Getter = require("../../../Getter");
 const Integrations = require("../../system/Integrations") ;
 

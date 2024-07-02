@@ -5,7 +5,7 @@ class WalletProvider {
         this.wallet = wallet;
     }
 
-    setIntegrations(integrations = new Integrations) {
+    setIntegrations(integrations) {
         this.integrations = integrations;
         return this;
     }

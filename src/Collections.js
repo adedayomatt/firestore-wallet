@@ -2,9 +2,6 @@ class Collections {
     constructor(config = {}) {
         this.config = config
     }
-    concatenate(entities = []) {
-        return entities.join("_")
-    }
 
     entityCollection() {
         return this.config.entity_collection || "users";
@@ -13,49 +10,49 @@ class Collections {
     entity() {
         return this.config.entity || this.config.entity_collection;
     }
+
+    getCollection(entities = []) {
+        return [this.entity()].concat(entities).join("_")
+    }
     entityIdentifierKey() {
-        return this.concatenate([this.entity(),"id"])
+        return this.getCollection(["id"])
     }
     entityTransactions() {
-        return this.concatenate([this.entity(), "transactions"])
+        return this.getCollection(["transactions"])
     }
     entityWallets() {
-        return this.concatenate([this.entity(), "wallets"])
+        return this.getCollection(["wallets"])
     }
     entityWithdrawalRequests() {
-        return this.concatenate([this.entity(), "withdrawal_requests"])
+        return this.getCollection(["withdrawal_requests"])
     }
     entityWalletHistory() {
-        return this.concatenate([this.entity(), "wallet_history"])
+        return this.getCollection(["wallet_history"])
     }
     adminWallets() {
-        return this.concatenate(["admin", "wallets"])
+        return this.getCollection(["admin", "wallets"])
     }
 
     adminWalletHistory() {
-        return this.concatenate(["admin", "wallet", "history"])
+        return this.getCollection(["admin", "wallet", "history"])
     }
     adminCollectionWallets() {
-        return this.concatenate(["admin", "collection", "wallets"])
+        return this.getCollection(["admin", "collection", "wallets"])
     }
 
     adminCollectionWalletHistory() {
-        return this.concatenate(["admin", "collection", "wallets", "history"])
+        return this.getCollection(["admin", "collection", "wallets", "history"])
     }
 
     system() {
-        return this.concatenate(["system"])
+        return this.getCollection(["system"])
     }
     systemIntegrations() {
-        return this.concatenate(["system", "integration"])
-    }
-
-    systemAdmins() {
-        return this.concatenate(["system", "admins"])
+        return this.getCollection(["integrations"])
     }
 
     systemFeeWalletConfig() {
-        return this.concatenate(["system", "fee", "collection"])
+        return this.getCollection(["system", "fee", "collection"])
     }
 }
 

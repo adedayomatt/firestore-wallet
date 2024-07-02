@@ -3,7 +3,7 @@ const { gql } =  require('apollo-server-express');
 const schema = gql`
 
     extend type Mutation {
-        revolutValidateAccountName(account_details: RevolutAccountNameValidationInput!): RevolutAccountNameValidation
+        revolutValidateAccountName(entity_id: ID, account_details: RevolutAccountNameValidationInput!): RevolutAccountNameValidation
     }
     
     type RevolutAccountNameValidation {

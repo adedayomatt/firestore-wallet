@@ -4,11 +4,16 @@ const Entity = require("./models/Entity");
 
 class EntityQueries {
     constructor(db, collections = new Collections()) {
-        this.entity = new Entity(db, collections)
+        this.db = db;
+        this.collections = collections;
+    }
+
+    getEntity({ entity_id }) {
+        return (new Entity(this.db, this.collections)).setId(entity_id).get()
     }
 
      getTransactions({ entity_id, wallet_id }) {
-        return this.entity.setId(entity_id)
+        return (new Entity(this.db, this.collections)).setId(entity_id)
             .Transactions()
             .getCollectionWithBuilder(query => {
                 query = wallet_id ? query.where("metadata.wallet_id", "==", wallet_id) : query
@@ -17,7 +22,7 @@ class EntityQueries {
     }
 
     getWithdrawalRequests({ entity_id, wallet_id }) {
-        return this.entity.setId(entity_id)
+        return (new Entity(this.db, this.collections)).setId(entity_id)
             .WithdrawalRequests()
             .getCollectionWithBuilder(query => {
                 query = wallet_id ? query.where("metadata.wallet_id", "==", wallet_id) : query

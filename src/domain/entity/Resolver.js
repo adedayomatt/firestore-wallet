@@ -14,6 +14,7 @@ class EntityResolver extends Resolver {
         queries() {
             const queries = new Queries(this.db, this.collections)  ;
             return {
+                    getEntity: async (parent, args, context) => await queries.getEntity(args),
                     getEntityTransactions: async (parent, args, context) => await queries.getTransactions(args),
                     getEntityWithdrawalRequests: async (parent, args, context) => await queries.getWithdrawalRequests(args)
             }
@@ -22,6 +23,7 @@ class EntityResolver extends Resolver {
         mutations() {
                 const mutations = new Mutations(this.db, this.collections)  ;
                 return {
+                        createEntity: async (parent, args, context) => await mutations.createEntity(args),
                         createEntityWallet: async (parent, args, context) => await mutations.createWallet(args),
                         createEntityWithdrawalRequest: async (parent, args, context) => await mutations.createWithdrawalRequest(args),
                         connectEntityNgnWallet: async (parent, args, context) => await mutations.connectNgnWallet(args),
@@ -30,6 +32,8 @@ class EntityResolver extends Resolver {
                         disconnectEntityUsdWallet: async (parent, args, context) => await mutations.disconnectUsdWallet(args),
                         connectEntityGbpWallet: async (parent, args, context) => await mutations.connectGbpWallet(args),
                         disconnectEntityGbpWallet: async (parent, args, context) => await mutations.disconnectGbpWallet(args),
+                        entityWalletTransfer: async (parent, args, context) => await mutations.walletTransfer(args),
+                        setEntityIntegrations: async (parent, args, context) => await mutations.setEntityIntegrations(args),
                 }
         }
 

@@ -53,7 +53,7 @@ class RevolutWalletConnection extends WalletProvider  {
             await this.transaction.setMetadata([
                 { key: "external_reference", value: transfer.id },
                 { key: "external_response", value: JSON.stringify(transfer) }
-            ]).set({ status: transfer.state })
+            ]).set({ provider_status: transfer.state })
         }
         return transfer;
     }

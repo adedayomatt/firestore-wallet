@@ -1,6 +1,6 @@
 const walletTypes = require("../../../enums/wallet_types");
 const status = require("../../../enums/status");
-const WalletLedger = require("../../../Services/WalletLedger");
+const WalletLedger = require("../../../services/WalletLedger");
 const Getter = require("../../../Getter");
 
 class AdminCollectionWalletGetter extends Getter {

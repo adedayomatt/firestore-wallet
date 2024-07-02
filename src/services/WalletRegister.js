@@ -23,16 +23,23 @@ class WalletRegister {
         return this;
     }
 
+    setTransaction(transaction) {
+        this.transaction = transaction;
+        return this;
+    }
+
     getLedger() {
         return new WalletLedger()
             .setWalletModel(this.wallet)
             .setHistoryModel(this.history)
+            .setTransaction(this.transaction)
     }
 
     getAdminLedger() {
         return new WalletLedger()
             .setWalletModel(this.adminWallet)
             .setHistoryModel(this.adminWallet.History())
+            .setTransaction(this.transaction)
     }
 
     async fetchAdminWallet() {

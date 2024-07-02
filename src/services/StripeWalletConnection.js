@@ -45,7 +45,7 @@ class StripeWalletConnection extends WalletProvider  {
             await this.transaction.setMetadata([
                 { key: "external_reference", value: transfer.id },
                 { key: "external_response", value: JSON.stringify(transfer) }
-            ]).set({ status: transfer.id ? status.success : status.failed })
+            ]).set({ provider_status: transfer.id ? status.success : status.failed })
         }
         return transfer;
     }

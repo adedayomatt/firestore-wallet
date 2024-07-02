@@ -10,7 +10,6 @@ class AdminQueries {
     constructor(db, collections = new Collections) {
         this.db = db
         this.collections = collections;
-        this.entity = new Entity(db, collections);
     }
 
      getAllTransactions() {

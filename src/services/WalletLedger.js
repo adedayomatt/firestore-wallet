@@ -26,6 +26,11 @@ class WalletLedger {
         return this;
     }
 
+    setTransaction(transaction) {
+        this.transaction = transaction;
+        return this;
+    }
+
     getAmount() {
         return this.data.amount || 0;
     }
@@ -48,7 +53,8 @@ class WalletLedger {
 
     async balance(amount, description, metadata = []) {
         await this.fetchWallet();
-        await this.history.setMetadata(metadata.concat([ {key: "wallet_id", value: this.data.id} ]))
+        if(this.transaction) metadata.push({ key: "transaction_id", value: this.transaction.id } )
+        await this.history.setMetadata(metadata.concat([ { key: "wallet_id", value: this.data.id } ]))
             .create({
             amount, description, metadata,
             type: amount > 0 ? constants.wallet_action_type_credit : constants.wallet_action_type_debit,
@@ -59,7 +65,12 @@ class WalletLedger {
             amount: this.getAmount() + amount
         })
     }
-
+    async credit(amount, description, metadata = []) {
+        return this.balance(amount, description, metadata)
+    }
+    async debit(amount, description, metadata = []) {
+        return this.balance(-1*amount, description, metadata)
+    }
     async block(amount, description, metadata = []) {
         await this.fetchWallet();
         await this.history.setMetadata(metadata.concat([ {key: "wallet_id", value: this.data.id} ]))

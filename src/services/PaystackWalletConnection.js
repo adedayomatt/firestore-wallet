@@ -40,7 +40,7 @@ class PaystackWalletConnection extends WalletProvider {
             await this.transaction.setMetadata([
                 { key: "external_reference", value: transfer.transfer_code },
                 { key: "external_response", value: JSON.stringify(transfer) }
-            ]).set({ status: transfer.status })
+            ]).set({ provider_status: transfer.status })
         }
         return transfer;
     }

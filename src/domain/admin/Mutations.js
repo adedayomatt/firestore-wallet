@@ -9,11 +9,12 @@ const walletTypes = require("../../enums/wallet_types");
 const transactionTypes = require("../../enums/transaction_types");
 const helper = require("../../helpers");
 const Collections = require("../../Collections");
-const Entity = require("../entity/models/Entity");
+const EntityModel = require("../entity/models/Entity");
 const System = require("../system/models/System");
 const AdminWallet = require("./models/Wallet");
 const AdminCollectionWallet = require("./models/CollectionWallet");
 const Integrations = require("../system/Integrations");
+const Entity = require("../entity/models/Entity");
 
 class AdminMutations {
     constructor(db, collections = new Collections) {
@@ -21,7 +22,6 @@ class AdminMutations {
         this.collections = collections;
         this.AdminWallets = new AdminWallet(db, collections);
         this.AdminCollectionWallets = new AdminCollectionWallet(db, collections);
-        this.entity = new Entity(db, collections);
         this.system = new System(db, collections);
         this.integrations = new Integrations(db, collections)
     }
@@ -52,7 +52,7 @@ class AdminMutations {
     }
 
     async createTransaction( { entity_id, wallet_id, data } ){
-        const Entity = this.entity.setId(entity_id);
+        const Entity = (new EntityModel(this.db, this.collections)).setId(entity_id);
         const Wallet = Entity.Wallets(wallet_id);
 
         const transaction = await Entity.Transactions()
@@ -64,6 +64,7 @@ class AdminMutations {
             await new WalletRegister(this.db, this.collections)
                 .setWallet(Wallet)
                 .setWalletHistory(Entity.WalletHistory())
+                .setTransaction(Entity.Transactions(transaction.id))
                 .balance(TransactionGetter.net(transaction), transaction.description, [
                     { key: this.collections.entityIdentifierKey(), value: Entity.getId() },
                     { key: "transaction_id", value: transaction.id }
@@ -86,14 +87,14 @@ class AdminMutations {
     }
 
     async updateTransaction( { entity_id, transaction_id, data }){
-        const Entity = this.entity.setId(entity_id)
+        const Entity = (new EntityModel(this.db, this.collections)).setId(entity_id)
         return Entity.Transactions(transaction_id)
             .setMetadata((data.metadata || []))
             .update(data);
     }
 
     async fundWallet({ entity_id, entity_wallet_id: wallet_id, admin_wallet_id, data }){
-        const Entity = this.entity.setId(entity_id);
+        const Entity = (new EntityModel(this.db, this.collections)).setId(entity_id);
         const Wallet = Entity.Wallets(wallet_id);
         const AdminWallet = this.AdminWallets.setId(admin_wallet_id);
 
@@ -124,9 +125,9 @@ class AdminMutations {
             .setWallet(Wallet)
             .setWalletHistory(Entity.WalletHistory())
             .setAdminWallet(AdminWallet)
+            .setTransaction(Entity.Transactions(transaction.id))
             .credit(data.amount, data.comment, (data.metadata || []).concat([
                 { key: this.collections.entityIdentifierKey(), value: Entity.getId() },
-                { key: "transaction_id", value: transaction.id },
             ]))
 
         if(data.send_to_bank) {
@@ -155,9 +156,9 @@ class AdminMutations {
                     .setWallet(Wallet)
                     .setWalletHistory(Entity.WalletHistory())
                     .setAdminWallet(AdminWallet)
+                    .setTransaction(Entity.Transactions(payoutTransaction.id))
                     .debit(data.amount, data.comment, (data.metadata || []).concat([
                         { key: this.collections.entityIdentifierKey(), value: Entity.getId() },
-                        { key: "transaction_id", value: payoutTransaction.id },
                     ]))
             } catch (e) {
                 await Entity.Transactions(payoutTransaction.id)
@@ -170,7 +171,7 @@ class AdminMutations {
     }
 
     async reviewWithdrawalRequest({ entity_id, request_id, data } ){
-        const Entity = this.entity.setId(entity_id);
+        const Entity = (new EntityModel(this.db, this.collections)).setId(entity_id);
 
         let request = await Entity.WithdrawalRequests().getDocWithBuilder(q => {
             return q.where("id", "==", request_id).where("status", "==", status.pending)
@@ -235,10 +236,10 @@ class AdminMutations {
                 await new WalletRegister(this.db, this.collections)
                     .setWallet(Wallet)
                     .setWalletHistory(Entity.WalletHistory())
+                    .setTransaction(Entity.Transactions(transaction.id))
                     .balance(TransactionGetter.net(transaction), transaction.description, [
                         {key: this.collections.entityIdentifierKey(), value: entity_id},
                         {key: "request_id", value: request_id},
-                        {key: "transaction_id", value: transaction.id},
                     ]);
             } catch (e) {
                 if(transaction) {

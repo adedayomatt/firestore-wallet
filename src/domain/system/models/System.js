@@ -10,10 +10,6 @@ class System extends FirestoreCollectionModel {
         this.collections = collections;
     }
 
-    Admins() {
-        return this.setId(this.collections.systemAdmins())
-    }
-
     Integration(id) {
         return new FirestoreCollectionModel(this.db.collection(this.collections.systemIntegrations())).setId(id)
     }

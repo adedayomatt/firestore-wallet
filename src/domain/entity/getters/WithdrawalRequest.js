@@ -1,5 +1,6 @@
 const Collections = require("../../../Collections");
 const Getter = require("../../../Getter");
+const Entity = require("../models/Entity");
 
 class EntityWalletRequestGetter extends Getter {
     constructor(db, collections = new Collections()) {
@@ -8,7 +9,7 @@ class EntityWalletRequestGetter extends Getter {
 
     async getEntity(request) {
         if(request._metadata[this.collections.entityIdentifierKey()]) {
-            return await this.entity
+            return await (new Entity(this.db, this.collections))
                 .setId(request._metadata[this.collections.entityIdentifierKey()])
                 .get()
         }
@@ -16,7 +17,7 @@ class EntityWalletRequestGetter extends Getter {
 
     async getWallet(request) {
         if(request._metadata[this.collections.entityIdentifierKey()] && request._metadata.wallet_id) {
-            return await this.entity
+            return await (new Entity(this.db, this.collections))
                 .setId(request._metadata[this.collections.entityIdentifierKey()])
                 .Wallets(request._metadata.wallet_id)
                 .get()

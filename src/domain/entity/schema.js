@@ -2,27 +2,33 @@ const {gql} = require("apollo-server-express");
 
 const entity = gql`
 
-    extend type Query {    
-        getEntityWithdrawalRequests(entity_id: ID, wallet_id: ID): [EntityWithdrawalRequest]
-        getEntityTransactions(entity_id: ID, wallet_id: ID): [EntityTransaction]
+    extend type Query {  
+        getEntity(entity_id: ID!): Entity  
+        getEntityWithdrawalRequests(entity_id: ID!, wallet_id: ID!): [EntityWithdrawalRequest]
+        getEntityTransactions(entity_id: ID!, wallet_id: ID!): [EntityTransaction]
      }
 
     extend type Mutation {
-        createEntityWallet (entity_id: ID, wallet_type: String! ): EntityWallet
-        createEntityWithdrawalRequest ( entity_id: ID, wallet_id: ID!, data: EntityWithdrawalRequestInput! ): EntityWithdrawalRequest
-        connectEntityNgnWallet (entity_id: ID, name: String!, account_number: String!, bank_code: String!): EntityWallet
-        disconnectEntityNgnWallet(entity_id: ID): EntityWallet
-        connectEntityUsdWallet (entity_id: ID, authorization_code: String!): EntityWallet
-        disconnectEntityUsdWallet (entity_id: ID): EntityWallet
-        connectEntityGbpWallet (entity_id: ID, account_details: RevolutCounterPartyInput!): EntityWallet
-        disconnectEntityGbpWallet (entity_id: ID): EntityWallet
+        createEntity(type: String!, metadata: [MetadataInput]): Entity
+        createEntityWallet (entity_id: ID!, wallet_type: String!, parent_entity_id: ID): EntityWallet
+        createEntityWithdrawalRequest ( entity_id: ID!, wallet_id: ID!, account_details: PaystackNubanInput! ): EntityWithdrawalRequest
+        connectEntityNgnWallet (entity_id: ID!, wallet_id: ID!, account_details: PaystackNubanInput!): EntityWallet
+        disconnectEntityNgnWallet(entity_id: ID!, wallet_id: ID!): EntityWallet
+        connectEntityUsdWallet (entity_id: ID!, wallet_id: ID!, authorization_code: String!): EntityWallet
+        disconnectEntityUsdWallet (entity_id: ID!, wallet_id: ID!): EntityWallet
+        connectEntityGbpWallet (entity_id: ID!, wallet_id: ID!, account_details: RevolutCounterPartyInput!): EntityWallet
+        disconnectEntityGbpWallet (entity_id: ID!, wallet_id: ID!): EntityWallet
+        entityWalletTransfer (data: EntityWalletTransferInput!): EntityTransaction
+        setEntityIntegrations(entity_id: ID!, integrations: EntityIntegrationsInput): Entity
     }
 
     type Entity { 
         id: ID!
-        wallets: [EntityWallet]
-        transactions: [EntityTransaction]
+        type: String
         metadata: [Metadata]
+        integrations: EntityIntegrations
+        wallets: [EntityWallet]
+        transactions: [EntityTransaction]   
     }
     
     type EntityWallet { 
@@ -33,7 +39,7 @@ const entity = gql`
         available: Float
         status: String
         type: WalletType
-        entity: Entity
+        parent_entity: Entity
         metadata: [Metadata]
         connection: String
         timestamp: Timestamp
@@ -72,6 +78,7 @@ const entity = gql`
         title: String
         description: String
         status: String
+        provider_status: String
         fees: [Metadata]
         extra_fees: [TransactionExtraFee]
         fees_total: Float
@@ -84,6 +91,31 @@ const entity = gql`
         metadata: [Metadata]
         timestamp: Timestamp
     } 
+    
+    input EntityWalletTransferInput {
+        from: EntityWalletInput!
+        to: EntityWalletInput!
+        amount: Float!
+        comment: String
+        metadata: [MetadataInput]
+    }
+    
+    input EntityWalletInput {
+        entity_id: ID!
+        wallet_id: ID!
+    }
+    
+    type EntityIntegrations {
+        stripe: String
+        paystack: String
+        revolut: String
+    }
+    
+    input EntityIntegrationsInput {
+        stripe: String
+        paystack: String
+        revolut: String
+    }
 `;
 
 module.exports = entity;
