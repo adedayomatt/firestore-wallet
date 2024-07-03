@@ -24,7 +24,7 @@ class EntityQueries {
     getWallet({ entity_id, wallet_type }) {
         return (new Entity(this.db, this.collections))
             .setId(entity_id)
-            .Wallets(wallet_id)
+            .Wallets()
             .getDocWithBuilder(q => q.where('type', '==', wallet_type))
     }
 
