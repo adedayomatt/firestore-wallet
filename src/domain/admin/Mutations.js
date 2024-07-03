@@ -58,8 +58,9 @@ class AdminMutations {
         const transaction = await Entity.Transactions()
             .setMetadata((data.metadata || []).concat([
                 { key: this.collections.entityIdentifierKey(), value: Entity.getId() },
+                { key: "wallet_id", value: Wallet.getId() }
             ]))
-            .create({ ...data, status: status.success });
+            .create({ ...data, status: status.pending });
         try {
             await new WalletRegister(this.db, this.collections)
                 .setWallet(Wallet)
@@ -77,7 +78,7 @@ class AdminMutations {
                 ])
                 .setWallet(await Wallet.get())
                 .apply()
-            return transaction;
+            return await Entity.Transactions(transaction.id).update({ status: status.success });
         } catch (e) {
             if(transaction) {
                 await Entity.Transactions(transaction.id).update({ status: status.failed })
@@ -112,9 +113,9 @@ class AdminMutations {
             title: "Wallet Funding",
             type: transactionTypes.funding,
             description: data.comment,
-            date: moment().format("YYYY-MM-DD"),
+            date: moment().toISOString(),
             amount: data.amount,
-            status: status.success
+            status: status.pending
         }
 
         const transaction = await Entity.Transactions()
@@ -128,7 +129,8 @@ class AdminMutations {
             .setTransaction(Entity.Transactions(transaction.id))
             .credit(data.amount, data.comment, (data.metadata || []).concat([
                 { key: this.collections.entityIdentifierKey(), value: Entity.getId() },
-            ]))
+            ]));
+        await Entity.Transactions(transaction.id).set({ status: status.success })
 
         if(data.send_to_bank) {
             const payoutTransaction = await Entity.Transactions()
@@ -152,7 +154,7 @@ class AdminMutations {
                     .setTransaction(Entity.Transactions(payoutTransaction.id))
                     .payout()
 
-                return await new WalletRegister(this.db, this.collections)
+                const paidOutWallet = await new WalletRegister(this.db, this.collections)
                     .setWallet(Wallet)
                     .setWalletHistory(Entity.WalletHistory())
                     .setAdminWallet(AdminWallet)
@@ -160,13 +162,14 @@ class AdminMutations {
                     .debit(data.amount, data.comment, (data.metadata || []).concat([
                         { key: this.collections.entityIdentifierKey(), value: Entity.getId() },
                     ]))
+                await Entity.Transactions(payoutTransaction.id).set({ status: status.success })
+                return paidOutWallet;
             } catch (e) {
                 await Entity.Transactions(payoutTransaction.id)
                     .setMetadata([{ key: "error", value: e.message }])
                     .set({ status: status.failed })
             }
         }
-
         return fundedWallet;
     }
 
