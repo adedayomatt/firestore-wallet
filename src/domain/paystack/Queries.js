@@ -7,7 +7,7 @@ class PaystackQueries {
         this.collections = collections
     }
 
-    async getBanks(entity_id) {
+    async getBanks({ entity_id }) {
         const integration = entity_id
             ? new EntityIntegrations(this.db).setEntity(new Entity(this.db, this.collections).setId(entity_id))
             : new Integrations(this.db, this.collections)
