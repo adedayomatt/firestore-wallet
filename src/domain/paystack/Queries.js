@@ -12,7 +12,7 @@ class PaystackQueries {
             ? new EntityIntegrations(this.db).setEntity(new Entity(this.db, this.collections).setId(entity_id))
             : new Integrations(this.db, this.collections)
         return (await integration.paystack())
-            .getBanks()
+            .getBanks();
     }
 }
 
