@@ -9,11 +9,28 @@ class EntityQueries {
     }
 
     getEntity({ entity_id }) {
-        return (new Entity(this.db, this.collections)).setId(entity_id).get()
+        return (new Entity(this.db, this.collections))
+            .setId(entity_id)
+            .get()
+    }
+
+    getWallets({ entity_id }) {
+        return (new Entity(this.db, this.collections))
+            .setId(entity_id)
+            .Wallets()
+            .all()
+    }
+
+    getWallet({ entity_id, wallet_type }) {
+        return (new Entity(this.db, this.collections))
+            .setId(entity_id)
+            .Wallets(wallet_id)
+            .getDocWithBuilder(q => q.where('type', '==', wallet_type))
     }
 
      getTransactions({ entity_id, wallet_id }) {
-        return (new Entity(this.db, this.collections)).setId(entity_id)
+        return (new Entity(this.db, this.collections))
+            .setId(entity_id)
             .Transactions()
             .getCollectionWithBuilder(query => {
                 query = wallet_id ? query.where("metadata.wallet_id", "==", wallet_id) : query
@@ -22,7 +39,8 @@ class EntityQueries {
     }
 
     getWithdrawalRequests({ entity_id, wallet_id }) {
-        return (new Entity(this.db, this.collections)).setId(entity_id)
+        return (new Entity(this.db, this.collections))
+            .setId(entity_id)
             .WithdrawalRequests()
             .getCollectionWithBuilder(query => {
                 query = wallet_id ? query.where("metadata.wallet_id", "==", wallet_id) : query

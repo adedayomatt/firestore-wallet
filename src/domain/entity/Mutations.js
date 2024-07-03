@@ -9,10 +9,6 @@ const Collections = require("../../Collections");
 const Entity = require("./models/Entity")
 const Integrations = require("../system/Integrations");
 const EntityIntegrations = require("./Integrations");
-const transactionTypes = require("../../enums/transaction_types");
-const WalletPayout = require("../../services/WalletPayout");
-const helper = require("../../helpers");
-const WalletRegister = require("../../services/WalletRegister");
 
 class EntityMutation {
     constructor(db, collections = new Collections()) {
@@ -21,8 +17,9 @@ class EntityMutation {
         this.SystemIntegrations = new Integrations(db, collections)
     }
 
-    async createEntity({ type, metadata }) {
+    async createEntity({ id, type, metadata }) {
         return await (new Entity(this.db, this.collections))
+            .setId(id)
             .setMetadata(metadata || [])
             .create({ type });
     }
@@ -173,7 +170,6 @@ class EntityMutation {
         const { from, to, amount, comment, metadata } = data;
         const fromEntity = (new Entity(this.db, this.collections)).setId(from.entity_id);
         const toEntity = (new Entity(this.db, this.collections)).setId(to.entity_id);
-        const sender = await fromEntity.get();
 
         return new WalletTransfer(this.db, this.collections)
             .setOriginEntity(fromEntity)

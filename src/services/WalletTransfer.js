@@ -106,7 +106,7 @@ class WalletTransfer {
             title: "Wallet Transfer",
             type: transactionTypes.transfer,
             description: description,
-            date: moment().format("YYYY-MM-DD"),
+            date: moment().toISOString(),
             amount: amount,
             status: status.success
         }
@@ -164,7 +164,7 @@ class WalletTransfer {
         const { amount, description } = transactionData;
 
         const transaction = await this.getOriginEntity().Transactions()
-            .setMetadata(this.getTransactionMetaData())
+            .setMetadata([{ key: "wallet_id", value: this.getOriginWallet().getId() }].concat(this.getTransactionMetaData()))
             .create({...transactionData, outflow: amount})
 
         try {
@@ -183,7 +183,7 @@ class WalletTransfer {
         const { amount, description } = transactionData;
 
         const transaction = await this.getDestinationEntity().Transactions()
-            .setMetadata(this.getTransactionMetaData())
+            .setMetadata([{ key: "wallet_id", value: this.getDestinationWallet().getId() }].concat(this.getTransactionMetaData()))
             .create({...transactionData, inflow: amount})
 
         try {

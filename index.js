@@ -12,7 +12,7 @@ const EntityWithdrawalRequest = require("./src/domain/entity/models/WithdrawalRe
 const AdminWallet = require("./src/domain/admin/models/Wallet");
 const AdminCollectionWallet = require("./src/domain/admin/models/CollectionWallet");
 const System = require("./src/domain/system/models/System");
-const Collections = require("./src/Collections")
+const Collections = require("./src/Collections");
 
 class Wallet {
     constructor(db) {
