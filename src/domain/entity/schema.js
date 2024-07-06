@@ -4,8 +4,8 @@ const entity = gql`
 
     extend type Query {  
         getEntity(entity_id: ID!): Entity  
-        getEntityWithdrawalRequests(entity_id: ID!, wallet_id: ID!): [EntityWithdrawalRequest]
-        getEntityTransactions(entity_id: ID!, wallet_id: ID!): [EntityTransaction]
+        getEntityWithdrawalRequests(entity_id: ID!, wallet_id: ID!, limit: Int, offset: Int): [EntityWithdrawalRequest]
+        getEntityTransactions(entity_id: ID!, wallet_id: ID!, limit: Int, offset: Int): [EntityTransaction]
      }
 
     extend type Mutation {

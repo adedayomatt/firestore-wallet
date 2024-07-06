@@ -28,26 +28,39 @@ class EntityQueries {
             .getDocWithBuilder(q => q.where('type', '==', wallet_type))
     }
 
-     getTransactions({ entity_id, wallet_id }) {
+     getTransactions({ entity_id, wallet_id, limit, offset }) {
         return (new Entity(this.db, this.collections))
             .setId(entity_id)
             .Transactions()
             .getCollectionWithBuilder(query => {
-                query = wallet_id ? query.where("metadata.wallet_id", "==", wallet_id) : query
-                return query.orderBy("timestamp.created_at", "desc");
+                query = wallet_id ? query.where("metadata.wallet_id", "==", wallet_id) : query;
+                query = query.orderBy("timestamp.created_at", "desc");
+                query = limit ? query.limit(limit) : query;
+                query = offset ? query.offset(offset) : query;
+                return query;
             })
     }
 
-    getWithdrawalRequests({ entity_id, wallet_id }) {
+    getTransaction({ entity_id, wallet_id, transaction_id }) {
+        return (new Entity(this.db, this.collections))
+            .setId(entity_id)
+            .Transactions(transaction_id)
+            .get();
+    }
+
+    getWithdrawalRequests({ entity_id, wallet_id, limit, offset }) {
         return (new Entity(this.db, this.collections))
             .setId(entity_id)
             .WithdrawalRequests()
             .getCollectionWithBuilder(query => {
                 query = wallet_id ? query.where("metadata.wallet_id", "==", wallet_id) : query
-                return query
+                query =  query
                     .orderBy('status')
                     .where("status", 'not-in', [status.approved])
                     .orderBy("timestamp.created_at", "desc");
+                query = limit ? query.limit(limit) : query;
+                query = offset ? query.offset(offset) : query;
+                return query;
             })
     }
 }
